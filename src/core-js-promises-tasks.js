@@ -56,8 +56,20 @@ function getPromiseResult(source) {
  * [Promise.resolve(1), Promise.reject(2), Promise.resolve(3)]  => Promise fulfilled with 1
  * [Promise.reject(1), Promise.reject(2), Promise.reject(3)]    => Promise rejected
  */
-function getFirstResolvedPromiseResult(/* promises */) {
-  throw new Error('Not implemented');
+function getFirstResolvedPromiseResult(promises) {
+  return new Promise((resolve, reject) => {
+    let rejections = 0;
+    const total = promises.length;
+
+    promises.forEach((promise) => {
+      promise.then(resolve).catch(() => {
+        rejections += 1;
+        if (rejections === total) {
+          reject(new Error('All promises were rejected'));
+        }
+      });
+    });
+  });
 }
 
 /**
@@ -79,8 +91,8 @@ function getFirstResolvedPromiseResult(/* promises */) {
  * [promise3, promise6, promise2] => Promise rejected with 2
  * [promise3, promise4, promise6] => Promise rejected with 6
  */
-function getFirstPromiseResult(/* promises */) {
-  throw new Error('Not implemented');
+function getFirstPromiseResult(promises) {
+  return Promise.race(promises);
 }
 
 /**
